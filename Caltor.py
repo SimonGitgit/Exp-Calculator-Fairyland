@@ -58,7 +58,7 @@ def getData():
     # sbmax = math.ceil(fac*(3*lv-10)/(20*(N-1)+math.ceil((lv/2))+250))
     # rd = math.floor(lv/2)+10*(N-1)
     # hbmax = math.ceil((-1*rd + math.ceil(math.sqrt(rd*rd+4*(1900+(N-1)*500))))*fac/2)
-    
+    # print(hbmax)
     #----------------------------AFTER MAX-------------------------------
     hp_on_1000_factor = math.floor((HP/fac)) if math.floor((HP/fac))<=50 else 50
     mp_on_1000_factor = math.floor((MP/fac)) if math.floor((MP/fac))<=50 else 50
@@ -105,17 +105,26 @@ def getData():
     textout[10].config(text=str(MP_after) if MP_after<=HPmax else MPmax, background="#15a7ac" if MP_after<=MPmax else "yellow", fg="#1e1e1e" if MP_after<=MPmax else "red")
 
     # 轉生前最大
-    quad_a = 1/fac
-    quad_b = (n-1)*10 + math.floor(lv/2)
-    quad_c = math.floor(100-fac*(2000+(n-1)*50))
-    HP_max_before = math.floor((-quad_b + math.sqrt(quad_b*quad_b-4*quad_a*quad_c))/(2*quad_a))
+    
+    quad_b = fac*((n-1)*10 + math.floor(lv/2))
+    quad_c = -1*fac*fac*(1900+(n-1)*50)
+    #print(quad_c)
+    print(quad_b)
+    print(quad_c)
+    HP_max_before = math.floor((-quad_b + math.sqrt(quad_b*quad_b-4*quad_c))/2)
 
     #HP_max_before = math.ceil(((2000+(n-1)*500) - 100)* fac /(10+10*(n-1)+math.floor(lv/2)))
+    
 
+
+
+    # rd = (n-1)*10 + math.floor(lv/2)
+    # hbmax = math.ceil((-1*rd + math.ceil(math.sqrt(rd*rd-4*(1900+(n-1)*500))))*fac/2)
+    #print(hbmax)
 
     MP_max_before = HP_max_before
     textout[1].config(text=str(HP_max_before) , background="#15a7ac" if HP_after<=HPmax else "yellow", fg="#1e1e1e" if HP_after<=HPmax else "red")
-    textout[2].config(text=str(MP_max_before) , background="#15a7ac" if MP_after<=MPmax else "yellow", fg="#1e1e1e" if MP_after<=MPmax else "red")
+    #textout[2].config(text=str(hbmax) , background="#15a7ac" if MP_after<=MPmax else "yellow", fg="#1e1e1e" if MP_after<=MPmax else "red")
 
 
 
