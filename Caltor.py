@@ -1,15 +1,5 @@
 try:
     from tkinter import *
-    import tkinter
-    import tkinter.messagebox
-    #from tkinter import Tk
-    #from tkinter import Canvas
-    #from tkinter import messagebox
-    import serial
-    import os
-    import time
-    import threading
-    import sys
     import math
 except:
     pass
@@ -48,17 +38,6 @@ def getData():
         #s[3] = enput[6]  s[8]= enput[11]
         s[x] = (int(enput[x+3].get()))
         #print(s[x])
-    #----------------------------BEFORE MAX-------------------------------
-    #print(fac*(3*L-10))
-    #print((20*(N-1)+math.ceil((L/2))+250))
-    #print(smax)
-    
-    
-
-    # sbmax = math.ceil(fac*(3*lv-10)/(20*(N-1)+math.ceil((lv/2))+250))
-    # rd = math.floor(lv/2)+10*(N-1)
-    # hbmax = math.ceil((-1*rd + math.ceil(math.sqrt(rd*rd+4*(1900+(N-1)*500))))*fac/2)
-    # print(hbmax)
     #----------------------------AFTER MAX-------------------------------
     hp_on_1000_factor = math.floor((HP/fac)) if math.floor((HP/fac))<=50 else 50
     mp_on_1000_factor = math.floor((MP/fac)) if math.floor((MP/fac))<=50 else 50
@@ -86,8 +65,6 @@ def getData():
         S_after.append(math.floor(10+s[x]*((n-1)*10+b_on_2_factor[x]+math.floor(lv/2))/fac))
         textout[x+8].config(text=str(S_after[x]) if S_after[x]<=Smax else Smax, background="#15a7ac" if s[x] <= S_max_before else "yellow", fg="#1e1e1e" if s[x] <= S_max_before else "red")
   
-    
-
     # 「轉生後的生命值或法力值不可超過〔2000+(已轉生次數-1)×500〕」
     # 「轉生後的生命=100+生命值×〔（(轉生次數-1)×10）+(生命值÷1000)+(等級÷2)〕÷1000。
     #  其中生命值÷1000的數值上限最多計算到50」（法力的公式也一模一樣）
@@ -105,89 +82,23 @@ def getData():
     textout[10].config(text=str(MP_after) if MP_after<=HPmax else MPmax, background="#15a7ac" if MP_after<=MPmax else "yellow", fg="#1e1e1e" if MP_after<=MPmax else "red")
 
     # 轉生前最大
-    
+    #qudratic yields closet integer
     quad_b = fac*((n-1)*10 + math.floor(lv/2))
     quad_c = -1*fac*fac*(1900+(n-1)*50)
-    #print(quad_c)
-    print(quad_b)
-    print(quad_c)
-    HP_max_before = math.floor((-quad_b + math.sqrt(quad_b*quad_b-4*quad_c))/2)
+    HP_max_range = math.floor((-quad_b + math.sqrt(quad_b*quad_b-4*quad_c))/2)
+    #print("range from:", HP_max_range)
+    global minimax_hp
+    #search for minimax of hp,mp 
+    for hp in range(HP_max_range-1500, HP_max_range+1501,1):
+        if (100+hp/fac*(((n-1)*10)+math.floor(hp/fac)+math.floor(lv/2))) <= (2000+(n-1)*500):
 
-    #HP_max_before = math.ceil(((2000+(n-1)*500) - 100)* fac /(10+10*(n-1)+math.floor(lv/2)))
-    
+            minimax_hp = hp+1
+    textout[1].config(text=str(minimax_hp) , background="#15a7ac" if HP_after<=HPmax else "yellow", fg="#1e1e1e" if HP_after<=HPmax else "red")
+    textout[2].config(text=str(minimax_hp) , background="#15a7ac" if MP_after<=MPmax else "yellow", fg="#1e1e1e" if MP_after<=MPmax else "red")
 
-
-
-    # rd = (n-1)*10 + math.floor(lv/2)
-    # hbmax = math.ceil((-1*rd + math.ceil(math.sqrt(rd*rd-4*(1900+(n-1)*500))))*fac/2)
-    #print(hbmax)
-
-    MP_max_before = HP_max_before
-    textout[1].config(text=str(HP_max_before) , background="#15a7ac" if HP_after<=HPmax else "yellow", fg="#1e1e1e" if HP_after<=HPmax else "red")
-    #textout[2].config(text=str(hbmax) , background="#15a7ac" if MP_after<=MPmax else "yellow", fg="#1e1e1e" if MP_after<=MPmax else "red")
-
-
-
-    # if (HP<=hbmax):
-    #     textout[17].config(text=str(hamax), background="#15a7ac", fg="#1e1e1e")
-    # else:
-    #     textout[17].config(text=str(hamax), background="yellow", fg="red")
-    # if (MP<=hbmax):
-    #     textout[18].config(text=str(hamax), background="#15a7ac", fg="#1e1e1e")
-    # else:
-    #     textout[18].config(text=str(hamax), background="yellow", fg="red")
-    # for x in range(19,25):
-    #     if (s[x-19+3]<=sbmax):
-    #         textout[x].config(text=str(samax), background="#15a7ac", fg="#1e1e1e")
-    #     else:
-    #         textout[x].config(text=str(samax), background="yellow", fg="red")
-    # #----------------------------AFTER HMP -------------------------------
-    # if (math.floor(HP/fac)<=50):
-    #     if (math.floor(100+ HP*(10*(N-1)+math.floor(HP/fac)+math.floor(L/2))/fac)<=hamax):
-    #         ha = math.floor(100+ HP*(10*(N-1)+math.floor(HP/fac)+math.floor(L/2))/fac)
-    #     else:
-    #         ha = hamax
-    # else:
-    #     if math.floor(100+ HP*(10*(N-1)+50+math.floor(L/2))/fac)<=hamax:
-    #         ha = math.floor(100+ HP*(10*(N-1)+50+math.floor(L/2))/fac)
-    #     else:
-    #         ha = hamax
-    # textout[9].config(text=str(ha), background="#15a7ac", fg="#1e1e1e")
-
-    # if (math.floor(MP/fac)<=50):
-    #     if (math.floor(100+ MP*(10*(N-1)+math.floor(MP/fac)+math.floor(L/2))/fac)<=hamax):
-    #         ma = math.floor(100+ MP*(10*(N-1)+math.floor(MP/fac)+math.floor(L/2))/fac)
-    #     else:
-    #         ma = hamax
-    # else:
-    #     if math.floor(100+ MP*(10*(N-1)+50+math.floor(L/2))/fac)<=hamax:
-    #         ma = math.floor(100+ MP*(10*(N-1)+50+math.floor(L/2))/fac)
-    #     else:
-    #         ma = hamax
-    # textout[10].config(text=str(ma), background="#15a7ac", fg="#1e1e1e")
-    # #----------------------------AFTER S  -------------------------------
-    # sb=[]
-    # for x in range(1,13):
-    #     sb.append(0)
-    # for x in range(3,9):
-    #     if (s[x]/2<=250+10*(N-1)):
-    #         if (math.floor(10+s[x]*((N-1)*10+math.floor(L/2)+math.floor(s[x]/2))/fac)<=L*3):
-    #             sb[x]=math.floor(10+s[x]*((N-1)*10+math.floor(L/2)+(s[x]/2))/fac)
-    #         else:
-    #             sb[x]=L*3
-    #     else:
-    #         if (math.floor(10+s[x]*((N-1)*10+math.floor(L/2)+math.floor(250+10*(N-1)))/fac)<=L*3):
-    #             sb[x]=math.floor(10+s[x]*((N-1)*10+math.floor(L/2)+(250+10*(N-1)))/fac)
-    #         else:
-    #             sb[x]=L*3
-
-    #     if (s[x]<=sbmax):
-    #         textout[x+8].config(text=str(sb[x]), background="#15a7ac", fg="#1e1e1e")
-    #     else:
-    #         textout[x+8].config(text=str(samax), background="yellow", fg="red")
-
-def callback(event):
-    print("clicked at", event.x, event.y)
+# for canvas development
+# def callback(event):
+#     print("clicked at", event.x, event.y)
 
 global enput
 enput = []
@@ -201,7 +112,7 @@ for x in range(1,12):
 
 if (__name__=="__main__"):
     root = Tk()
-    root.title("童話王國復甦 轉生計算器 by Simon")
+    root.title("童話王國復甦 轉生計算器 @2022")
     canvas = Canvas(root, bg="#1e1e1e", width=500, height=400, borderwidth=0, highlightthickness=0)
     canvas.pack() #pack all in canvas
 
@@ -268,5 +179,5 @@ if (__name__=="__main__"):
     #L1 = Label(canvas, text="").place(x = 100, y = 230, anchor = "nw", width = "30")
     Button(canvas, text="轉生！",bg="#bf7937", command=getData).place(x = 250, y = 50, anchor = "nw", width="160", height="50")
     
-    root.bind("<Button-3>", callback)
+    #root.bind("<Button-3>", callback)
     root.mainloop()
